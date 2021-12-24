@@ -1,9 +1,10 @@
 import os
 import logging
 from dotenv import load_dotenv
-from telegram import Update, ForceReply
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-
+from telegram import Update, Bot
+from telegram.ext import (
+    Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
+from pprint import pprint
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -31,42 +32,56 @@ def detect_intent_texts(project_id, session_id, texts, language_code):
     response = session_client.detect_intent(
         request={"session": session, "query_input": query_input}
     )
-    print("Query text: {}".format(response.query_result.query_text))
-    print(
-        "Detected intent: {} (confidence: {})\n".format(
-            response.query_result.intent.display_name,
-            response.query_result.intent_detection_confidence,
-        )
-    )
 
-    return response.query_result.fulfillment_text
+    return response.query_result
 
 
 def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('Здравствуйте!')
+    update.message.reply_text('Бот поддержки ответит на Ваши вопросы')
 
 
-def echo(update: Update, context: CallbackContext) -> None:
-    fulfillment_text = detect_intent_texts(
+def support(update: Update, context: CallbackContext) -> None:
+    response_intent = detect_intent_texts(
         'kruser-support-bot',
-        1234567,
+        update.message.chat['id'],
         update.message.text,
         'ru-RU'
     )
-    update.message.reply_text(fulfillment_text)
+    pprint(response_intent)
+    if response_intent.action == 'input.unknown':
+        logger.info(f'Неизвестный запрос: {update.message.text}')
+    else:
+        update.message.reply_text(response_intent.fulfillment_text)
+
+
+class TgLogsHandler(logging.Handler):
+
+    def __init__(self, tg_bot, chat_id):
+        super().__init__()
+        self.chat_id = chat_id
+        self.tg_bot = tg_bot
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
 
 
 def main():
     load_dotenv()
-    token = os.getenv('TG_BOT_TOKEN')
-    os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+    tg_token = os.environ['TG_BOT_TOKEN']
+    tg_chat_id = os.environ['TG_CHAT_ID']
+    tg_bot = Bot(token=tg_token)
 
-    updater = Updater(token)
+    logger.addHandler(TgLogsHandler(tg_bot, tg_chat_id))
+
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS']
+
+    updater = Updater(tg_token)
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(
-        MessageHandler(Filters.text & ~Filters.command, echo)
+        MessageHandler(Filters.text & ~Filters.command, support)
     )
 
     updater.start_polling()

@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from telegram import Update, Bot
 from telegram.ext import (
     Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
-from pprint import pprint
 from intents import detect_intent_texts
 
 logging.basicConfig(
@@ -26,11 +25,7 @@ def support(update: Update, context: CallbackContext) -> None:
         update.message.text,
         'ru-RU'
     )
-    pprint(response_intent)
-    if response_intent.action == 'input.unknown':
-        return
-        # logger.info(f'Неизвестный запрос: {update.message.text}')
-    else:
+    if response_intent.action != 'input.unknown':
         update.message.reply_text(response_intent.fulfillment_text)
 
 

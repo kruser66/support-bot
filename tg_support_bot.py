@@ -25,7 +25,7 @@ def support(update: Update, context: CallbackContext) -> None:
         update.message.text,
         'ru-RU'
     )
-    if response_intent.action == 'input.unknown':
+    if response_intent.intent.is_fallback:
         return
     else:
         update.message.reply_text(response_intent.fulfillment_text)

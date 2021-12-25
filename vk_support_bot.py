@@ -14,7 +14,7 @@ def support(event, vk_api):
         language_code='ru-RU'
     )
 
-    if response_intent.action == 'input.unknown':
+    if response_intent.intent.is_fallback:
         return
     else:
         vk_api.messages.send(

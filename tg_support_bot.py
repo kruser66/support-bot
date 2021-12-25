@@ -5,6 +5,7 @@ from telegram import Update, Bot
 from telegram.ext import (
     Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
 from pprint import pprint
+from intents import detect_intent_texts
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -12,28 +13,6 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
-
-def detect_intent_texts(project_id, session_id, texts, language_code):
-    from google.cloud import dialogflow
-
-    session_client = dialogflow.SessionsClient()
-
-    session = session_client.session_path(project_id, session_id)
-    print("Session path: {}\n".format(session))
-
-    text_input = dialogflow.TextInput(
-        text=texts,
-        language_code=language_code
-    )
-
-    query_input = dialogflow.QueryInput(text=text_input)
-
-    response = session_client.detect_intent(
-        request={"session": session, "query_input": query_input}
-    )
-
-    return response.query_result
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -49,7 +28,8 @@ def support(update: Update, context: CallbackContext) -> None:
     )
     pprint(response_intent)
     if response_intent.action == 'input.unknown':
-        logger.info(f'Неизвестный запрос: {update.message.text}')
+        return
+        # logger.info(f'Неизвестный запрос: {update.message.text}')
     else:
         update.message.reply_text(response_intent.fulfillment_text)
 

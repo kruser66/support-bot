@@ -67,10 +67,10 @@ def main():
 
     for theme, sets in themes.items():
         create_intent(
-            'kruser-support-bot',
-            theme,
-            sets['questions'],
-            [sets['answer']]
+            project_id='kruser-support-bot',
+            display_name=theme,
+            training_phrases_parts=sets['questions'],
+            message_texts=[sets['answer']]
         )
 
 

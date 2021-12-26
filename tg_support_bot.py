@@ -20,12 +20,13 @@ def start(update: Update, context: CallbackContext) -> None:
 
 def support(update: Update, context: CallbackContext) -> None:
     response_intent = detect_intent_texts(
-        'kruser-support-bot',
-        update.message.chat['id'],
-        update.message.text,
-        'ru-RU'
+        project_id='kruser-support-bot',
+        session_id=update.message.chat['id'],
+        texts=update.message.text,
+        language_code='ru-RU'
     )
     if response_intent.intent.is_fallback:
+        # TODO обработчик "неизвестных" запросов
         return
     else:
         update.message.reply_text(response_intent.fulfillment_text)
@@ -45,6 +46,7 @@ class TgLogsHandler(logging.Handler):
 
 def main():
     load_dotenv()
+
     tg_token = os.environ['TG_BOT_TOKEN']
     tg_chat_id = os.environ['TG_CHAT_ID']
     tg_bot = Bot(token=tg_token)
@@ -52,6 +54,7 @@ def main():
     logger.addHandler(TgLogsHandler(tg_bot, tg_chat_id))
 
     os.environ['GOOGLE_APPLICATION_CREDENTIALS']
+    google_project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
 
     updater = Updater(tg_token)
     dispatcher = updater.dispatcher

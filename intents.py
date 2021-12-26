@@ -8,7 +8,6 @@ def create_intent(
         display_name,
         training_phrases_parts,
         message_texts):
-    """Create an intent of the given intent type."""
     from google.cloud import dialogflow
 
     intents_client = dialogflow.IntentsClient()
@@ -19,7 +18,6 @@ def create_intent(
         part = dialogflow.Intent.TrainingPhrase.Part(
             text=training_phrases_part
         )
-        # Here we create a new training phrase for each provided part.
         training_phrase = dialogflow.Intent.TrainingPhrase(parts=[part])
         training_phrases.append(training_phrase)
 
@@ -61,21 +59,23 @@ def detect_intent_texts(project_id, session_id, texts, language_code):
     return response.query_result
 
 
-def main():
+def main(project_id):
     with open('questions.json', 'r', encoding='utf-8') as file:
         themes = json.load(file)
 
     for theme, sets in themes.items():
         create_intent(
-            project_id='kruser-support-bot',
+            project_id=project_id,
             display_name=theme,
             training_phrases_parts=sets['questions'],
+            # передаем списком, если ответ всего один
             message_texts=[sets['answer']]
         )
 
 
 if __name__ == '__main__':
     load_dotenv()
-    os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS']
+    google_project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
 
-    main()
+    main(google_project_id)

@@ -6,15 +6,16 @@ from random import randint
 from intents import detect_intent_texts
 
 
-def support(event, vk_api):
+def support(event, vk_api, project_id):
     response_intent = detect_intent_texts(
-        project_id='kruser-support-bot',
+        project_id=project_id,
         session_id=event.user_id,
         texts=event.text,
         language_code='ru-RU'
     )
 
     if response_intent.intent.is_fallback:
+        # TODO обработчик "неизвестных" запросов
         return
     else:
         vk_api.messages.send(
@@ -27,6 +28,7 @@ def support(event, vk_api):
 if __name__ == "__main__":
     load_dotenv()
     vk_token = os.environ['TOKEN_GROUP_VK']
+    google_project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
 
     vk_session = vk.VkApi(token=vk_token)
     vk_api = vk_session.get_api()
@@ -34,4 +36,4 @@ if __name__ == "__main__":
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            support(event, vk_api)
+            support(event, vk_api, google_project_id)

@@ -1,17 +1,17 @@
 import os
-import logging
 from dotenv import load_dotenv
 from telegram import Update, Bot
 from telegram.ext import (
     Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
 from intents import detect_intent_texts
+import logging
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('support-bot')
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -20,14 +20,14 @@ def start(update: Update, context: CallbackContext) -> None:
 
 def support(update: Update, context: CallbackContext) -> None:
     response_intent = detect_intent_texts(
-        project_id='kruser-support-bot',
+        project_id=context.bot_data['google_project_id'],
         session_id=update.message.chat['id'],
         texts=update.message.text,
         language_code='ru-RU'
     )
     if response_intent.intent.is_fallback:
         # TODO обработчик "неизвестных" запросов
-        return
+        logger.info(f'TG_BOT: неизвестный запрос - "{update.message.text}"')
     else:
         update.message.reply_text(response_intent.fulfillment_text)
 
@@ -56,17 +56,23 @@ def main():
     os.environ['GOOGLE_APPLICATION_CREDENTIALS']
     google_project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
 
-    updater = Updater(tg_token)
-    dispatcher = updater.dispatcher
+    try:
+        updater = Updater(token=tg_token)
+        dispatcher = updater.dispatcher
+        dispatcher.bot_data = {
+            'google_project_id': google_project_id,
+        }
 
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(
-        MessageHandler(Filters.text & ~Filters.command, support)
-    )
+        dispatcher.add_handler(CommandHandler("start", start))
+        dispatcher.add_handler(
+            MessageHandler(Filters.text & ~Filters.command, support)
+        )
 
-    updater.start_polling()
+        updater.start_polling()
 
-    updater.idle()
+        updater.idle()
+    except Exception:
+        logger.exception('TG_BOT')
 
 
 if __name__ == '__main__':

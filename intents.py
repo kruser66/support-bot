@@ -1,6 +1,14 @@
 import os
 import json
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+
+logger = logging.getLogger('support-bot')
 
 
 def create_intent(

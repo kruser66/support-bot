@@ -1,11 +1,19 @@
 import os
+import logging
 import vk_api as vk
 from vk_api.longpoll import VkLongPoll, VkEventType
 from dotenv import load_dotenv
 from random import randint
 from intents import detect_intent_texts
 from telegram import Bot
-import logging
+from requests import (
+    ReadTimeout,
+    ConnectTimeout,
+    HTTPError,
+    Timeout,
+    ConnectionError
+)
+
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -66,5 +74,11 @@ if __name__ == "__main__":
         for event in longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 support(event, vk_api, google_project_id)
-    except Exception:
-        logger.exception('VK_BOT')
+    except (
+        ReadTimeout,
+        ConnectTimeout,
+        HTTPError,
+        Timeout,
+        ConnectionError
+    ):
+        logger.exception('VK_BOT: Ошибка requests')

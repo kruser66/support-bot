@@ -6,6 +6,7 @@ from telegram.ext import (
 from intents import detect_intent_texts
 import logging
 
+
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
@@ -47,8 +48,10 @@ class TgLogsHandler(logging.Handler):
 def main():
     load_dotenv()
 
-    tg_token = os.environ['TG_BOT_TOKEN']
+    # chat_id Администратора для мониторинга
     tg_chat_id = os.environ['TG_CHAT_ID']
+    tg_token = os.environ['TG_BOT_TOKEN']
+
     tg_bot = Bot(token=tg_token)
 
     logger.addHandler(TgLogsHandler(tg_bot, tg_chat_id))
@@ -56,20 +59,19 @@ def main():
     os.environ['GOOGLE_APPLICATION_CREDENTIALS']
     google_project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
 
+    updater = Updater(token=tg_token)
+    dispatcher = updater.dispatcher
+    dispatcher.bot_data = {
+        'google_project_id': google_project_id,
+    }
+
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(
+        MessageHandler(Filters.text & ~Filters.command, support)
+    )
+    updater.start_polling()
+
     try:
-        updater = Updater(token=tg_token)
-        dispatcher = updater.dispatcher
-        dispatcher.bot_data = {
-            'google_project_id': google_project_id,
-        }
-
-        dispatcher.add_handler(CommandHandler("start", start))
-        dispatcher.add_handler(
-            MessageHandler(Filters.text & ~Filters.command, support)
-        )
-
-        updater.start_polling()
-
         updater.idle()
     except Exception:
         logger.exception('TG_BOT')

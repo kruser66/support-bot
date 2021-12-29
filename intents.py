@@ -1,14 +1,6 @@
 import os
 import json
 from dotenv import load_dotenv
-import logging
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-
-logger = logging.getLogger('support-bot')
 
 
 def create_intent(
@@ -66,7 +58,7 @@ def detect_intent_texts(project_id, session_id, texts, language_code):
 
     return response.query_result
 
-
+# Пример загрузки вопросов и ответов в DialogFlow из подготовленного файла json
 def main(project_id):
     with open('questions.json', 'r', encoding='utf-8') as file:
         themes = json.load(file)

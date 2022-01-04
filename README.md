@@ -12,8 +12,12 @@
 Возможность присылать "неизвестные" запросы администратору систему напрямую в `Telegram`
 
 ## Пример работы
+1. Чат-бот в сообществе ВКонтакте
 
 ![Чат-бот в сообществе ВКонтакте](https://github.com/kruser66/support-bot/blob/main/example/vk_bot_example.gif)
+
+2. Чат-бот в Телеграм
+
 ![Чат-бот в Телеграм](https://github.com/kruser66/support-bot/blob/main/example/tg_bot_example.gif)
 
 # Как установить

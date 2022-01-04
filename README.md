@@ -18,10 +18,10 @@ Python3 должен быть уже установлен. Затем испол
 ```
 pip install -r requirements.txt
 ```
-1. Для работы необходимо зарегистрироваться в (Google Cloud Platform)[https://cloud.google.com/] `Get started for free`
+1. Для работы необходимо зарегистрироваться в [Google Cloud Platform](https://cloud.google.com/) -> `Get started for free`
 2. Создать новый проект (New project). Для чат-бота нужен будет `project_id`
 3. Создать `Service Account` и получить для него ключи в формате `json` скачать в папку своего проекта
-4. Зарегистрироваться в (DialogFlow)[https://dialogflow.cloud.google.com/]
+4. Зарегистрироваться в [DialogFlow](https://dialogflow.cloud.google.com/)
 5. Создать нового агента (Creat new agent) и указать для него `project_id`, полученный в Google Cloud
 6. Создать New Intent - объект отвечающий за ответы на вопросы определнной тематики. Содержит тренировочные фразы и ответы на них. 
 

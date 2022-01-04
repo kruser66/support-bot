@@ -80,5 +80,5 @@ if __name__ == "__main__":
         HTTPError,
         Timeout,
         ConnectionError
-    ):
-        logger.exception('VK_BOT: Ошибка requests')
+    ) as error:
+        logger.exception(f'VK_BOT: Ошибка requests {error}')

@@ -5,6 +5,13 @@ from telegram.ext import (
     Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
 from intents import detect_intent_texts
 import logging
+from requests import (
+    ReadTimeout,
+    ConnectTimeout,
+    HTTPError,
+    Timeout,
+    ConnectionError
+)
 
 
 logging.basicConfig(
@@ -48,7 +55,7 @@ class TgLogsHandler(logging.Handler):
 def main():
     load_dotenv()
 
-    # chat_id Администратора для мониторинга
+    # Telegram chat_id Администратора для мониторинга
     tg_chat_id = os.environ['TG_CHAT_ID']
     tg_token = os.environ['TG_BOT_TOKEN']
 
@@ -69,12 +76,17 @@ def main():
     dispatcher.add_handler(
         MessageHandler(Filters.text & ~Filters.command, support)
     )
-    updater.start_polling()
-
     try:
+        updater.start_polling()
         updater.idle()
-    except Exception:
-        logger.exception('TG_BOT')
+    except (
+        ReadTimeout,
+        ConnectTimeout,
+        HTTPError,
+        Timeout,
+        ConnectionError
+    ) as error:
+        logger.exception(f'TG_BOT: {error}')
 
 
 if __name__ == '__main__':

@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     logger.addHandler(TgLogsHandler(tg_bot, tg_chat_id))
 
-    vk_token = os.environ['TOKEN_GROUP_VK']
+    vk_token = os.environ['VK_GROUP_TOKEN']
     google_project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
 
     try:

@@ -11,6 +11,11 @@
 так и загрузку из подготовленного файла `json` (Вопросы-Ответы).
 Возможность присылать "неизвестные" запросы администратору систему напрямую в `Telegram`
 
+## Пример работы
+
+![Чат-бот в сообществе ВКонтакте](https://github.com/kruser66/support-bot/blob/main/example/vk_bot_example.gif)
+![Чат-бот в Телеграм](https://github.com/kruser66/support-bot/blob/main/example/tg_bot_example.gif)
+
 # Как установить
 
 Python3 должен быть уже установлен. Затем используйте pip (или pip3, есть есть конфликт с Python2) для установки зависимостей:
@@ -74,6 +79,12 @@ python tg_support_bot.py
 python vk_support_bot.py
 ```
 
+## Загрузка `intents` в `DialogFlow`
+
+Пример загрузки тренировочных фраз и ответов из файла `questions.json`
+```
+python intents.py
+```
 
 # Цель проекта
 

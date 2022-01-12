@@ -1,6 +1,7 @@
 import os
 import json
 from dotenv import load_dotenv
+from google.cloud import dialogflow
 
 
 def create_intent(
@@ -8,7 +9,6 @@ def create_intent(
         display_name,
         training_phrases_parts,
         message_texts):
-    from google.cloud import dialogflow
 
     intents_client = dialogflow.IntentsClient()
 
@@ -38,7 +38,6 @@ def create_intent(
 
 
 def detect_intent_texts(project_id, session_id, texts, language_code):
-    from google.cloud import dialogflow
 
     session_client = dialogflow.SessionsClient()
 
@@ -59,7 +58,7 @@ def detect_intent_texts(project_id, session_id, texts, language_code):
     return response.query_result
 
 
-def main(project_id):
+def main():
     '''
     Пример файла json для загрузки вопросов и ответов в DialogFlow:
     {
@@ -97,6 +96,9 @@ def main(project_id):
         },
     }
     '''
+    load_dotenv()
+    project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
+
     with open('questions.json', 'r', encoding='utf-8') as file:
         themes = json.load(file)
 
@@ -111,8 +113,4 @@ def main(project_id):
 
 
 if __name__ == '__main__':
-    load_dotenv()
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS']
-    google_project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
-
-    main(google_project_id)
+    main()

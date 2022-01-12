@@ -1,7 +1,10 @@
 import os
 import json
+import logging
 from dotenv import load_dotenv
 from google.cloud import dialogflow
+
+logger = logging.getLogger('dialogflow')
 
 
 def create_intent(
@@ -34,7 +37,7 @@ def create_intent(
         request={"parent": parent, "intent": intent}
     )
 
-    print("Intent created: {}".format(response))
+    logger.info("Intent created: {}".format(response))
 
 
 def detect_intent_texts(project_id, session_id, texts, language_code):
@@ -42,7 +45,8 @@ def detect_intent_texts(project_id, session_id, texts, language_code):
     session_client = dialogflow.SessionsClient()
 
     session = session_client.session_path(project_id, session_id)
-    print("Session path: {}\n".format(session))
+
+    logger.info("Session path: {}\n".format(session))
 
     text_input = dialogflow.TextInput(
         text=texts,

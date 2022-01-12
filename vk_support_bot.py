@@ -1,11 +1,11 @@
 import os
 import logging
 import vk_api as vk
+from tg_logs_handler_admin_chat import *
 from vk_api.longpoll import VkLongPoll, VkEventType
 from dotenv import load_dotenv
 from random import randint
-from intents import detect_intent_texts
-from telegram import Bot
+from dialogflow_intents import detect_intent_texts
 from requests import (
     ReadTimeout,
     ConnectTimeout,
@@ -14,11 +14,6 @@ from requests import (
     ConnectionError
 )
 
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
 
 logger = logging.getLogger('support-bot')
 
@@ -42,25 +37,13 @@ def support(event, vk_api, project_id):
         )
 
 
-class TgLogsHandler(logging.Handler):
-
-    def __init__(self, tg_bot, chat_id):
-        super().__init__()
-        self.chat_id = chat_id
-        self.tg_bot = tg_bot
-
-    def emit(self, record):
-        log_entry = self.format(record)
-        self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
-
-
 if __name__ == "__main__":
     load_dotenv()
 
-    tg_token = os.environ['TG_BOT_TOKEN']
-    tg_chat_id = os.environ['TG_CHAT_ID']
-    tg_bot = Bot(token=tg_token)
-
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=logging.INFO
+    )
     logger.addHandler(TgLogsHandler(tg_bot, tg_chat_id))
 
     vk_token = os.environ['VK_GROUP_TOKEN']

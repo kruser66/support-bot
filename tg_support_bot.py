@@ -1,9 +1,10 @@
 import os
+from tg_logs_handler_admin_chat import *
 from dotenv import load_dotenv
-from telegram import Update, Bot
+from telegram import Update
 from telegram.ext import (
     Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
-from intents import detect_intent_texts
+from dialogflow_intents import detect_intent_texts
 import logging
 from requests import (
     ReadTimeout,
@@ -13,11 +14,6 @@ from requests import (
     ConnectionError
 )
 
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
 
 logger = logging.getLogger('support-bot')
 
@@ -33,37 +29,19 @@ def support(update: Update, context: CallbackContext) -> None:
         texts=update.message.text,
         language_code='ru-RU'
     )
-    if response_intent.intent.is_fallback:
-        # TODO обработчик "неизвестных" запросов
-        logger.info(f'TG_BOT: неизвестный запрос - "{update.message.text}"')
-    else:
-        update.message.reply_text(response_intent.fulfillment_text)
 
-
-class TgLogsHandler(logging.Handler):
-
-    def __init__(self, tg_bot, chat_id):
-        super().__init__()
-        self.chat_id = chat_id
-        self.tg_bot = tg_bot
-
-    def emit(self, record):
-        log_entry = self.format(record)
-        self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
+    update.message.reply_text(response_intent.fulfillment_text)
 
 
 def main():
     load_dotenv()
 
-    # Telegram chat_id Администратора для мониторинга
-    tg_chat_id = os.environ['TG_CHAT_ID']
-    tg_token = os.environ['TG_BOT_TOKEN']
-
-    tg_bot = Bot(token=tg_token)
-
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=logging.INFO
+    )
     logger.addHandler(TgLogsHandler(tg_bot, tg_chat_id))
 
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS']
     google_project_id = os.environ['GOOGLE_CLOUD_PROJECT_ID']
 
     updater = Updater(token=tg_token)

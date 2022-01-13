@@ -1,5 +1,5 @@
 import os
-from tg_logs_handler import *
+from tg_logs_handler import TgLogsHandler, tg_chat_id, tg_token, tg_bot
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import (

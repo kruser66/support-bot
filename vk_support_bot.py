@@ -1,7 +1,7 @@
 import os
 import logging
 import vk_api as vk
-from tg_logs_handler import *
+from tg_logs_handler import TgLogsHandler, tg_chat_id, tg_bot
 from vk_api.longpoll import VkLongPoll, VkEventType
 from dotenv import load_dotenv
 from random import randint

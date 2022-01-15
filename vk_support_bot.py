@@ -1,7 +1,8 @@
 import os
 import logging
 import vk_api as vk
-from tg_logs_handler import TgLogsHandler, tg_chat_id, tg_bot
+from telegram import Bot
+from tg_logs_handler import TgLogsHandler
 from vk_api.longpoll import VkLongPoll, VkEventType
 from dotenv import load_dotenv
 from random import randint
@@ -15,7 +16,7 @@ from requests import (
 )
 
 
-logger = logging.getLogger('support-bot')
+logger = logging.getLogger('vk-support-bot')
 
 
 def support(event, vk_api, project_id):
@@ -39,6 +40,11 @@ def support(event, vk_api, project_id):
 
 if __name__ == "__main__":
     load_dotenv()
+    # Telegram chat_id Администратора для мониторинга
+    tg_chat_id = os.environ['TG_CHAT_ID']
+    tg_token = os.environ['TG_BOT_TOKEN']
+
+    tg_bot = Bot(token=tg_token)
 
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

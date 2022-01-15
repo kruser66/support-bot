@@ -1,7 +1,7 @@
 import os
-from tg_logs_handler import TgLogsHandler, tg_chat_id, tg_token, tg_bot
+from tg_logs_handler import TgLogsHandler
 from dotenv import load_dotenv
-from telegram import Update
+from telegram import Update, Bot
 from telegram.ext import (
     Updater, CommandHandler, MessageHandler, Filters, CallbackContext)
 from dialogflow_intents import detect_intent_texts
@@ -15,7 +15,7 @@ from requests import (
 )
 
 
-logger = logging.getLogger('support-bot')
+logger = logging.getLogger('tg-support-bot')
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -35,6 +35,11 @@ def support(update: Update, context: CallbackContext) -> None:
 
 def main():
     load_dotenv()
+    # Telegram chat_id Администратора для мониторинга
+    tg_chat_id = os.environ['TG_CHAT_ID']
+    tg_token = os.environ['TG_BOT_TOKEN']
+
+    tg_bot = Bot(token=tg_token)
 
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
